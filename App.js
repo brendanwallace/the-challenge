@@ -9,21 +9,48 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+// Handles the current level and challenge.
+// Each page should be its own top level component.
+class GameController {
+
+  constructor() {
+    this.currentLevel = 1;
+    this.currentChallenge = null;
+    this.introPages = {
+      0: null;
+    };
+    this.currentIntroPage = introPages[0]
+  }
+
+  nextPage() {
+
+  }
+
+  // Either renders the appropriate home/intro screen or passes off
+  // rendering to the active challenge.
+  render() {
+
+  }
+}
+
+// Challenge is a top-level object that handles transitioning between screens
+// within a single challenge and storing all the relevant state.
+class Challenge {
+  render() {
+  }
+}
+
+var state = {
+  controller = new GameController();
+}
+
 
 type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <Text style={styles.welcome}>Welcome to The Challenge</Text>
       </View>
     );
   }
