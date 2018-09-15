@@ -16,10 +16,11 @@ class GameController {
   constructor() {
     this.currentLevel = 1;
     this.currentChallenge = null;
-    this.introPages = {
+    this.introScreens = {
       0: null;
+      1: 
     };
-    this.currentIntroPage = introPages[0]
+    this.currentIntroScreen = introScreens[0]
   }
 
   nextPage() {
