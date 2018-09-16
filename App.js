@@ -10,6 +10,10 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import Intro from './components/challenges/intro.js';
 import Finesse from './components/challenges/finesse.js';
+import Identity from './components/challenges/identity.js';
+import Order from './components/challenges/order.js';
+import Stack from './components/challenges/stack.js';
+import Count from './components/challenges/count.js';
 import Memory from './components/challenges/memory.js';
 
 // Handles the current level and challenge.
@@ -19,22 +23,24 @@ class GameController extends Component {
   constructor(props) {
     super(props);
 
-    this.currentLevel = 1
-
     this.state = {
-      challenges: [
-        <Finesse onSuccess={() => this.nextChallenge()}/>,
-        <Memory onSuccess={() => this.nextChallenge()}/>,
-        <Intro onSuccess={() => this.nextChallenge()}/>,
-      ],
+      currentLevel: 0,
+      challenges: null,
     };
+
+    this.nextLevel();
   }
 
   nextLevel() {
-    this.currentLevel += 1;
+    this.state.currentLevel += 1;
     this.state.challenges = [
-      <Finesse onSuccess={() => this.nextChallenge()}/>,
-      <Intro onSuccess={() => this.nextChallenge()}/>,
+      <Memory level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Order level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Stack level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Count level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Identity level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Finesse level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
+      <Intro level={this.state.currentLevel} onSuccess={() => this.nextChallenge()}/>,
     ];
   }
 
@@ -58,7 +64,13 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
+      <View>
+      <Text></Text>
+      <Text></Text>
+      <Text></Text>
+      <Text></Text>
       <GameController />
+      </View>
     )
   }
 }

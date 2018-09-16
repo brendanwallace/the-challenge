@@ -40,7 +40,7 @@ class LevelIntroScreen extends Component {
   render() {
     return (
       <View>
-        <Text>This is the level intro screen</Text>
+        <Text>This is the level {this.props.level} intro screen</Text>
         <Button title="next" onPress={this.props.next} />
       </View>
     );
@@ -73,6 +73,9 @@ export default class Intro extends Component {
   }
 
   render() {
+    if (this.props.level >= 4) {
+      return (<View><Text> You win </Text></View>);
+    }
     switch(this.state.currentScreen) {
       case SCREENS.HOME:
         return <HomeScreen next={() => this.next()}/>;
@@ -81,7 +84,7 @@ export default class Intro extends Component {
       case SCREENS.RULESANDREQUIREMENTS:
         return <RulesAndRequirementsScreen next={() => this.next()}/>;
       case SCREENS.LEVELINTRO:
-        return <LevelIntroScreen next={() => this.next()}/>;
+        return <LevelIntroScreen level={this.props.level} next={() => this.next()}/>;
     }
   }
 }

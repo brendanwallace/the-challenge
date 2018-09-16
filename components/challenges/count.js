@@ -1,4 +1,4 @@
-// Finesse challenge
+// Count challenge
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
@@ -7,7 +7,7 @@ class RulesScreen extends Component {
   render() {
     return (
       <View>
-        <Text>This is the Finesse rules screen</Text>
+        <Text>This is the Count rules screen</Text>
         <Button title="next" onPress={this.props.next} />
       </View>
     );
@@ -18,7 +18,7 @@ class InProgressScreen extends Component {
   render() {
     return (
       <View>
-        <Text>This is the Finesse in progress screen</Text>
+        <Text>This is the Count in progress screen</Text>
         <Button title="next" onPress={this.props.next} />
       </View>
     );
@@ -30,7 +30,7 @@ var SCREENS = {
   INPROGRESS: 1,
 }
 
-export default class Finesse extends Component {
+export default class Count extends Component {
 
   constructor(props) {
     super(props);
