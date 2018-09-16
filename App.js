@@ -8,41 +8,49 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import Intro from './components/challenges/intro.js';
+import Finesse from './components/challenges/finesse.js';
+import Memory from './components/challenges/memory.js';
 
 // Handles the current level and challenge.
 // Each page should be its own top level component.
-class GameController {
+class GameController extends Component {
 
-  constructor() {
-    this.currentLevel = 1;
-    this.currentChallenge = null;
-    this.introScreens = {
-      0: null;
-      1: 
+  constructor(props) {
+    super(props);
+
+    this.currentLevel = 1
+
+    this.state = {
+      challenges: [
+        <Finesse onSuccess={() => this.nextChallenge()}/>,
+        <Memory onSuccess={() => this.nextChallenge()}/>,
+        <Intro onSuccess={() => this.nextChallenge()}/>,
+      ],
     };
-    this.currentIntroScreen = introScreens[0]
   }
 
-  nextPage() {
+  nextLevel() {
+    this.currentLevel += 1;
+    this.state.challenges = [
+      <Finesse onSuccess={() => this.nextChallenge()}/>,
+      <Intro onSuccess={() => this.nextChallenge()}/>,
+    ];
+  }
 
+  nextChallenge() {
+    this.state.challenges.pop();
+    if (this.state.challenges.length <= 0) {
+      this.nextLevel();
+    }
+    this.forceUpdate();
   }
 
   // Either renders the appropriate home/intro screen or passes off
   // rendering to the active challenge.
   render() {
-
+    return (this.state.challenges[this.state.challenges.length - 1]);
   }
-}
-
-// Challenge is a top-level object that handles transitioning between screens
-// within a single challenge and storing all the relevant state.
-class Challenge {
-  render() {
-  }
-}
-
-var state = {
-  controller = new GameController();
 }
 
 
@@ -50,10 +58,8 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to The Challenge</Text>
-      </View>
-    );
+      <GameController />
+    )
   }
 }
 

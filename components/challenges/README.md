@@ -1,0 +1,1 @@
+Put all the screens and the challenge object for each challenge into just one file.
