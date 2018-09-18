@@ -8,7 +8,7 @@ class RulesScreen extends Component {
     return (
       <View>
         <Text>This is the Finesse rules screen</Text>
-        <Button title="next" onPress={this.props.next} />
+        <Button title="Start challenge" onPress={this.props.startChallenge} />
       </View>
     );
   }
@@ -19,7 +19,8 @@ class InProgressScreen extends Component {
     return (
       <View>
         <Text>This is the Finesse in progress screen</Text>
-        <Button title="next" onPress={this.props.next} />
+        <Button title="Show rules" onPress={this.props.showRules} />
+        <Button title="Complete challenge" onPress={this.props.completeChallenge} />
       </View>
     );
   }
@@ -39,21 +40,36 @@ export default class Finesse extends Component {
     }
   }
 
-  next() {
-    var nextScreen = this.state.currentScreen + 1;
-    if (nextScreen > 1) {
-      this.props.onSuccess();
-    } else {
-      this.setState({currentScreen: nextScreen});
-    }
+  startTimer() {
+    this.props.startTimer();
+  }
+  stopTimer() {
+    this.props.stopTimer();
+  }
+
+  showRules() {
+    this.stopTimer();
+    this.setState({currentScreen: SCREENS.RULES});
+  }
+
+  startChallenge() {
+    this.startTimer();
+    this.setState({currentScreen: SCREENS.INPROGRESS});
+  }
+
+  completeChallenge() {
+    this.stopTimer();
+    this.props.onSuccess();
   }
 
   render() {
     switch(this.state.currentScreen) {
       case SCREENS.RULES:
-        return <RulesScreen next={() => this.next()}/>;
+        return <RulesScreen startChallenge={() => this.startChallenge()}/>;
       case SCREENS.INPROGRESS:
-        return <InProgressScreen next={() => this.next()}/>;
+        return <InProgressScreen
+                showRules={() => this.showRules()}
+                completeChallenge={() => this.completeChallenge()}/>;
     }
   }
 }
