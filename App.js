@@ -115,12 +115,9 @@ class GameController extends Component {
   // rendering to the active challenge.
   render() {
     return (
-      <View>
-      <Text></Text>
-      <Text></Text>
-      <Text></Text>
-      <Text>{Math.round(this.state.time)}</Text>
-      {this.state.currentChallenge}
+      <View style={styles.challengeContainer}>
+        <Text>{Math.round(this.state.time)}</Text>
+        {this.state.currentChallenge}
       </View>
     );
   }
@@ -135,7 +132,7 @@ export default class App extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  challengeContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

@@ -3,11 +3,30 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
+var LEVEL_ONE_RULES = (
+  "Going in turn around the table, each player must spin a coin on the "
+  + "table, take a sip from their drink while it’s still spinning, and then "
+  + "pick the coin up cleanly between their pointer and middle fingers of one "
+  + "hand (making a gesture like cutting scissors).  If any player fails, the "
+  + "whole group must start over. You may reorder the players however you "
+  + "like.");
+
 class RulesScreen extends Component {
+  getRules() {
+    switch (this.props.level) {
+      case 1:
+        return LEVEL_ONE_RULES;
+      case 2:
+        return "";
+      case 3:
+        return "";
+    }
+  }
+
   render() {
     return (
       <View>
-        <Text>This is the Finesse rules screen</Text>
+        <Text>{this.getRules()}</Text>
         <Button title="Start challenge" onPress={this.props.startChallenge} />
       </View>
     );
@@ -65,7 +84,7 @@ export default class Finesse extends Component {
   render() {
     switch(this.state.currentScreen) {
       case SCREENS.RULES:
-        return <RulesScreen startChallenge={() => this.startChallenge()}/>;
+        return <RulesScreen level={this.props.level} startChallenge={() => this.startChallenge()}/>;
       case SCREENS.INPROGRESS:
         return <InProgressScreen
                 showRules={() => this.showRules()}
