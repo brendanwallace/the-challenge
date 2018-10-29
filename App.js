@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 import Intro from './components/challenges/intro.js';
 import Finesse from './components/challenges/finesse.js';
 import Identity from './components/challenges/identity.js';
@@ -15,10 +15,153 @@ import Order from './components/challenges/order.js';
 import Stack from './components/challenges/stack.js';
 import Count from './components/challenges/count.js';
 import Memory from './components/challenges/memory.js';
+import Header from './components/header.js';
+import Footer from './components/footer.js';
 
 var STARTING_TIME = 100.0;
+var STARTING_LIVES = 2;
 
-var CHALLENGES = {
+var PAGE = {
+  MENU: 0,
+  CHALLENGE_MODE: 1,
+  RACE_THE_CLOCK: 2,
+  HIGH_SCORES: 3,
+  ABOUT: 4,
+  LEAD_IN: 5,
+  GAME: 6,
+  SUCCESS: 7,
+  FAILURE: 8,
+};
+
+var DIFFICULTY = {
+  EASY: 0,
+  DIFFICULT: 1,
+  CARDINAL: 2,
+};
+
+class Router extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      screen: PAGE.LEAD_IN,
+      controller: null,
+    }
+  }
+
+  goTo(screen) {
+    this.setState({screen: screen});
+  }
+
+  success() {
+    this.setState({
+      screen: PAGE.SUCCESS,
+      controller: null,
+    });
+  }
+
+  failure() {    
+    this.setState({
+      screen: PAGE.FAILURE,
+      controller: null,
+    });
+  }
+
+  launchChallenge(difficulty) {
+    this.setState({
+      screen: PAGE.GAME,
+      controller: <Controller difficulty={difficulty}
+                              mode={MODE.CHALLENGE}
+                              success={() => this.success()}
+                              failure={() => this.failure()}/>,
+    });
+  }
+
+  render() {
+    return (
+      <View style={styles.view}>
+        <Text /><Text />
+        <Text>The Challenge</Text>
+        { this.content() }
+      </View>
+    )
+  }
+
+
+  content() {
+    if (this.state.screen == PAGE.LEAD_IN) {
+      return (
+        <View>
+          <Button title="start" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      );
+    } else if (this.state.screen == PAGE.MENU) {
+      return (
+        <View>
+          <Button title="challenge mode" onPress={() => this.goTo(PAGE.CHALLENGE_SELECT)} />
+          <Button title="race the clock" onPress={() => this.goTo(PAGE.RACE_THE_CLOCK)} />
+          <Button title="high scores" onPress={() => this.goTo(PAGE.HIGH_SCORES)} />
+          <Button title="about this game" onPress={() => this.goTo(PAGE.ABOUT)} />
+        </View>
+      );
+    } else if (this.state.screen == PAGE.CHALLENGE_SELECT) {
+      return (
+        <View>
+          <Text>Choose your difficulty</Text>
+          <Button title="the easy challenge" onPress={() => this.launchChallenge(DIFFICULTY.EASY)} />
+          <Button title="the difficult challenge" onPress={() => this.launchChallenge(DIFFICULTY.DIFFICULT)} />
+          <Button title="the cardinal challenge" onPress={() => this.launchChallenge(DIFFICULT.CARDINAL)} />
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.RACE_THE_CLOCK) {
+      return (
+        <View>
+          <Text>Race the clock mode not yet unlocked.</Text>
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.HIGH_SCORES) {
+      return (
+        <View>
+          <Text>No high scores yet.</Text>
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.ABOUT) {
+      return (
+        <View>
+          <Text>No about page yet.</Text>
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.SUCCESS) {
+      return (
+        <View>
+          <Text>SUCCESS!</Text>
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.FAILURE) {
+      return (
+        <View>
+          <Text>fAiLuRe :( you ran out of lives</Text>
+          <Button title="back to menu" onPress={() => this.goTo(PAGE.MENU)} />
+        </View>
+      )
+    } else if (this.state.screen == PAGE.GAME) {
+      return (this.state.controller);
+    }
+  }
+}
+
+var MODE = {
+  CHALLENGE: 0,
+  TIMED_MODE: 1,
+};
+
+var CHALLENGE = {
   INTRO: 0,
   FINESSE: 1,
   IDENTITY: 2,
@@ -28,96 +171,75 @@ var CHALLENGES = {
   MEMORY: 6,
 };
 
-// Handles the current level and challenge.
-// Each page should be its own top level component.
-class GameController extends Component {
+
+// Handles the game logic and creating each challenge.
+// For now only supports single difficulty mode (play
+// through easy, difficult or cardinal).
+class Controller extends Component {
 
   constructor(props) {
     super(props);
+
+    let challengeNumber = 2;
+
     this.state = {
-      currentLevel: 1,
-      // this.nextChallenge() will update this to 0 (INTRO) correctly:
-      currentChallengeNumber: -1,
-      challenges: null,
-      time: STARTING_TIME,
-      timerRunning: false,
+
+      // These all get reset when someone starts a challenge.
+      mode: MODE.CHALLENGE,
+      challengeNumber: challengeNumber,
+      lives: 2,
+      challenge: this.createChallenge(challengeNumber),
     };
   }
 
-  componentDidMount() {
-    // This is the correct place to set up timers and do setup things
-    // that require the component to have been rendered already.
-    setInterval(() => {this.tick()}, 100);
-    this.completeChallenge();
+  loseLife() {
+    let lives = this.state.lives - 1;
+    if (lives <= 0) {
+      this.props.failure();
+    } else {
+      this.setState({lives : lives});
+    }
   }
 
-  startTimer() {
-    this.setState({timerRunning: true});
-  }
-
-  stopTimer() {
-    this.setState({timerRunning: false});
-  }
-
-  tick() {
-    // Tick at 0.1 second increments to make the starting and stopping 
-    // basically smooth.
-    if (this.state.timerRunning) {
-      this.setState({time: this.state.time - 0.1});
+  createChallenge(challengeNumber) {
+    let difficulty = this.props.difficulty;
+    if (challengeNumber == CHALLENGE.INTRO) {
+      return (<Intro controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.FINESSE) {
+      return (<Finesse controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.IDENTITY) {
+      return (<Identity controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.COUNT) {
+      return (<Count controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.STACK) {
+      return (<Stack controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.ORDER) {
+      return (<Order controller={this} difficulty={difficulty} />);
+    } else if (challengeNumber == CHALLENGE.MEMORY) {
+      return (<Memory controller={this} difficulty={difficulty} />);
     }
   }
 
   completeChallenge() {
-    this.state.currentChallengeNumber += 1;
-    // Completed a level:
-    if (this.state.currentChallengeNumber > 6) {
-      this.state.currentChallengeNumber = 0;
-      this.state.currentLevel += 1;
+    var nextChallengeNumber = this.state.challengeNumber + 1;
+    if (nextChallengeNumber > 6) {
+      this.props.success();
+    } else {
+      this.setState({
+        challengeNumber: nextChallengeNumber,
+        challenge: this.createChallenge(nextChallengeNumber),
+      });
     }
-
-    // Props passed to all the challenges:
-    var props = {
-      level: this.state.currentLevel,
-      onSuccess: () => this.completeChallenge(),
-      startTimer: () => this.startTimer(),
-      stopTimer: () => this.stopTimer(),
-    };
-    var challengeElement = null;
-    switch (this.state.currentChallengeNumber) {
-      case CHALLENGES.INTRO:
-        challengeElement = Intro;
-        break;
-      case CHALLENGES.FINESSE:
-        challengeElement = Finesse;
-        break;
-      case CHALLENGES.IDENTITY:
-        challengeElement = Identity;
-        break;
-      case CHALLENGES.COUNT:
-        challengeElement = Count;
-        break;
-      case CHALLENGES.STACK:
-        challengeElement = Stack;
-        break;
-      case CHALLENGES.ORDER:
-        challengeElement = Order;
-        break;
-      case CHALLENGES.MEMORY:
-        challengeElement = Memory;
-        break;
-    }
-    this.setState({
-      currentChallenge: React.createElement(
-        challengeElement, props)});
   }
 
-  // Either renders the appropriate home/intro screen or passes off
+  // Either renders the appropriate LeadIn/intro screen or passes off
   // rendering to the active challenge.
   render() {
     return (
       <View style={styles.challengeContainer}>
-        <Text>{Math.round(this.state.time)}</Text>
-        {this.state.currentChallenge}
+        <Text /><Text />
+        <Header lives={this.state.lives} difficulty={this.props.difficulty} />
+        {this.state.challenge}
       </View>
     );
   }
@@ -127,15 +249,20 @@ class GameController extends Component {
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-    return (<GameController />);
+    return (<Router />);
   }
 }
 
 const styles = StyleSheet.create({
+  view: {
+    flex: 1,
+  },
+  challenge: {
+    textAlign: 'center',
+    flex: 1,
+  },
   challengeContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   welcome: {

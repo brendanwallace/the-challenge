@@ -3,55 +3,34 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
-class HomeScreen extends Component {
+class RulesAndRequirements extends Component {
   render() {
     return (
       <View>
-        <Text>This is the home screen</Text>
+        <Text>Rules and Requirements</Text>
+        <Text>
+          Over the following minutes, you and your team will work together
+          to complete a series of timed drinking-game challenges. Take too long
+          during any of them, and you lose a life. Complete all 6 challenges
+          before losing all of your lives to complete a difficulty level.
+          Complete all 3 difficulty levels and you have bested The Challenge.
+        </Text>
+        <Text>
+          Each challenge is a cooperative drinking game.  Mistakes
+          will often require each player to take a sip of their drink to
+          proceed.  Before you begin, make sure that each player has a suitable
+          drink.
+        </Text>
+        <Text>
+          Each challenge is a cooperative drinking game.  Mistakes
+          will often require each player to take a sip of their drink to
+          proceed.  Before you begin, make sure that each player has a suitable
+          drink.
+        </Text>
         <Button title="next" onPress={this.props.next} />
       </View>
     );
   }
-}
-
-class SelectScreen extends Component {
-  render() {
-    return (
-      <View>
-        <Text>This is the select screen</Text>
-        <Button title="next" onPress={this.props.next} />
-      </View>
-    );
-  }
-}
-
-class RulesAndRequirementsScreen extends Component {
-  render() {
-    return (
-      <View>
-        <Text>This is the rules and requirements screen</Text>
-        <Button title="next" onPress={this.props.next} />
-      </View>
-    );
-  }
-}
-
-class LevelIntroScreen extends Component {
-  render() {
-    return (
-      <View>
-        <Text>This is the level {this.props.level} intro screen</Text>
-        <Button title="next" onPress={this.props.next} />
-      </View>
-    );
-  }
-}
-
-var SCREENS = {
-  HOME: 0,
-  SELECT: 1,
-  RULESANDREQUIREMENTS: 2,
-  LEVELINTRO: 3,
 }
 
 export default class Intro extends Component {
@@ -59,32 +38,16 @@ export default class Intro extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentScreen: SCREENS.HOME,
+      rulesShown: false,
+      levelIntroShown: false,
     }
   }
 
   next() {
-    var nextScreen = this.state.currentScreen + 1;
-    if (nextScreen > 3) {
-      this.props.onSuccess();
-    } else {
-      this.setState({currentScreen: nextScreen});
-    }
+    this.props.controller.completeChallenge();
   }
 
   render() {
-    if (this.props.level >= 4) {
-      return (<View><Text> You win </Text></View>);
-    }
-    switch(this.state.currentScreen) {
-      case SCREENS.HOME:
-        return <HomeScreen next={() => this.next()}/>;
-      case SCREENS.SELECT:
-        return <SelectScreen next={() => this.next()}/>;
-      case SCREENS.RULESANDREQUIREMENTS:
-        return <RulesAndRequirementsScreen next={() => this.next()}/>;
-      case SCREENS.LEVELINTRO:
-        return <LevelIntroScreen level={this.props.level} next={() => this.next()}/>;
-    }
+    return <RulesAndRequirements next={() => this.next()} />;
   }
 }

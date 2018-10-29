@@ -2,74 +2,16 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
+import DefaultChallenge from './default.js';
 
-class RulesScreen extends Component {
-  render() {
-    return (
-      <View>
-        <Text>This is the Stack rules screen</Text>
-        <Button title="Start challenge" onPress={this.props.startChallenge} />
-      </View>
-    );
-  }
-}
-
-class InProgressScreen extends Component {
-  render() {
-    return (
-      <View>
-        <Text>This is the Stack in progress screen</Text>
-        <Button title="Show rules" onPress={this.props.showRules} />
-        <Button title="Complete challenge" onPress={this.props.completeChallenge} />
-      </View>
-    );
-  }
-}
-
-var SCREENS = {
-  RULES: 0,
-  INPROGRESS: 1,
-}
-
-export default class Stack extends Component {
-
+export default class Stack extends DefaultChallenge {
   constructor(props) {
     super(props);
-    this.state = {
-      currentScreen: 0,
-    }
-  }
 
-  startTimer() {
-    this.props.startTimer();
-  }
-  stopTimer() {
-    this.props.stopTimer();
-  }
-
-  showRules() {
-    this.stopTimer();
-    this.setState({currentScreen: SCREENS.RULES});
-  }
-
-  startChallenge() {
-    this.startTimer();
-    this.setState({currentScreen: SCREENS.INPROGRESS});
-  }
-
-  completeChallenge() {
-    this.stopTimer();
-    this.props.onSuccess();
-  }
-
-  render() {
-    switch(this.state.currentScreen) {
-      case SCREENS.RULES:
-        return <RulesScreen startChallenge={() => this.startChallenge()}/>;
-      case SCREENS.INPROGRESS:
-        return <InProgressScreen
-                showRules={() => this.showRules()}
-                completeChallenge={() => this.completeChallenge()}/>;
-    }
+    this.title = "Stack";
+    this.challengeTime = 5;
+    this.rules = [
+      "Stack 1", "Stack 2", "Stack 3",
+    ];
   }
 }
