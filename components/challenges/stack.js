@@ -9,9 +9,12 @@ export default class Stack extends DefaultChallenge {
     super(props);
 
     this.title = "Stack";
-    this.challengeTime = 5;
+    this.challengeTimes = [45, 120, 90];
     this.rules = [
-      "Stack 1", "Stack 2", "Stack 3",
+      "Build a card pyramid. Each player must add a triangle (/\\) of cards. " +
+      "Any time the pyramid falls, all players drink and start over.",
+      "Stack 2",
+      "Stack 3",
     ];
   }
 }

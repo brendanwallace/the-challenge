@@ -3,20 +3,24 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
+import RoundContent from '../roundContent/roundContent.js';
+import RoundButton from '../roundButton/roundButton.js';
+import TimerBubble from '../timerBubble/timerBubble.js';
+
 export default class DefaultChallenge extends Component {
 
   constructor(props) {
     super(props);
 
     // Override these:
-    this.title = "";
-    this.challengeTime = -1;
-    this.rules = ["default 1", "default 2", "default 3"];
+    this.title = null;
+    this.challengeTimes = null;
+    this.rules = null;
 
     this.state = {
       started: false,
       paused: true,
-      remainingTime: this.challengeTime,
+      remainingTime: -1,
     }
   }
 
@@ -24,6 +28,7 @@ export default class DefaultChallenge extends Component {
     // This is the correct place to set up timers and do setup things
     // that require the component to have been rendered already.
     var intervalId = setInterval(() => {this.tick()}, 100);
+    this.challengeTime = this.challengeTimes[this.props.difficulty];
     this.setState({
         intervalId: intervalId,
         remainingTime: this.challengeTime,
@@ -70,40 +75,40 @@ export default class DefaultChallenge extends Component {
   }
 
   getButtons() {
+    var title;
+    var onPress;
     if (!this.state.started) {
-      return (<Button title="Start challenge" onPress={() => this.startChallenge()} />);
+      title = "start challenge";
+      onPress = () => this.startChallenge();
+    } else if (this.state.paused) {
+      title = "resume";
+      onPress = () => this.resume();
+    } else {
+      title = "pause";
+      onPress = () => this.pause();
     }
-    if (this.state.paused) {
-      return (<Button title="Resume" onPress={() => this.resume()} />);
-    }
-    return (
-      <View>
-        <Button title="Pause" onPress={() => this.pause()} />
-        <Button title="Complete!" onPress={() => this.props.controller.completeChallenge()} />
-      </View>
-    )
+    return (<RoundButton
+              style={{marginTop: -40, marginLeft: 20}}
+              size="small"
+              title={title}
+              onPress={onPress} />);
   }
 
   render() {
     return (
-      <View style={defaultChallenge.view}>
-        <Text>{this.title}</Text>
-        <Text>{this.getRules()}</Text>
-        { true &&
-        <Text>{this.state.remainingTime.toFixed(1)}</Text>}
+      <View>
+        <RoundContent
+          title={this.title}
+          content={this.getRules()}
+          size="rules" />
+        <TimerBubble
+          style={{marginLeft: 180, marginTop: 20}}
+          time={this.state.remainingTime.toFixed(1)}
+          lives={this.props.controller.state.lives}
+          started={this.state.started}
+          onPress={() => this.props.controller.completeChallenge()} />
         {this.getButtons()}
       </View>
     )
   }
 }
-
-const defaultChallenge = StyleSheet.create({
-  view: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  text: {
-    textAlign: 'right',
-  },
-});
